@@ -8,13 +8,12 @@ afterAll(() => db.end());
 
 beforeEach(() => seed(testData));
 
-describe('3. GET /api/topics', () => {
+describe('GET /api/topics', () => {
     test('endpoint responds with status of 200 and an array of topic objects', () => {
         return request(app)
         .get('/api/topics')
         .expect(200)
         .then(({body}) => {
-            // console.log(Object.keys(body))
             expect(body.topics).toEqual([
                 {
                   description: 'The man, the Mitch, the legend',

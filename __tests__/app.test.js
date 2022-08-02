@@ -75,3 +75,41 @@ describe('GET /api/articles/:article_id', () => {
     });
 });
 
+describe('PATCH /api/articles/:article_id', () => {
+    test('status: 200, respond with updated article', () => {
+        return request(app)
+        .patch('/api/articles/1')
+        .send({ inc_votes : 2 })
+        .expect(200)
+        .then(({body}) => {
+            expect(body.article).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: expect.any(String),
+                votes: 102,
+            });
+        });
+    });
+    test('status 400, respond with error message when No inc_votes on request body', () => {
+        return request(app)
+        .patch('/api/articles/1')
+        .send({})
+        .expect(400)
+        .then (({body}) => {
+            expect(body.msg).toBe('vote increment not provided')
+        });
+    });
+    test('status 400, respond with error message when invalid inc_votes on request body', () => {
+        return request(app)
+        .patch('/api/articles/1')
+        .send({inc_votes : "cat"})
+        .expect(400)
+        .then (({body}) => {
+            expect(body.msg).toBe('invalid input')
+        });
+    });  
+});
+

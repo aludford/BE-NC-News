@@ -25,6 +25,12 @@ exports.updateArticlesIdVotes = (article_id, incVotes) => {
     .query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;', [incVotes, article_id])
     .then( ({rows}) => {
         const article = rows[0];
-        return article
+        if (!article) {
+            return Promise.reject( {
+                status: 404,
+                msg: 'article not found'
+            });
+        };
+        return article;
     });
 };

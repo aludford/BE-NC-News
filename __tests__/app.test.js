@@ -110,6 +110,15 @@ describe('PATCH /api/articles/:article_id', () => {
         .then (({body}) => {
             expect(body.msg).toBe('invalid input')
         });
-    });  
+    });
+    test('status 404, responds with error if article_id does not exist ', () => {
+        return request(app)
+        .patch('/api/articles/9999')
+        .send({ inc_votes : 2 })
+        .expect(404)
+        .then( ({body}) => {
+            expect(body.msg).toBe('article not found');
+        });
+    }); 
 });
 

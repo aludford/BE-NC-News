@@ -8,6 +8,17 @@ afterAll(() => db.end());
 
 beforeEach(() => seed(testData));
 
+describe('Invalid endpoint', () => {
+    test('status:404, should return error for invalid endpoint', () => {
+        return request(app)
+        .get('/api/NotAnEndpoint')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid endpoint')
+        });
+    });
+});
+
 describe('GET /api/topics', () => {
     test('endpoint responds with status of 200 and an array of topic objects', () => {
         return request(app)
@@ -28,14 +39,6 @@ describe('GET /api/topics', () => {
                   slug: 'paper'
                 }
               ]);
-        });
-    });
-    test('404 - should return error for invalid endpoint', () => {
-        return request(app)
-        .get('/api/notanendpoint')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.msg).toBe('invalid endpoint')
         });
     });
 });
@@ -122,3 +125,38 @@ describe('PATCH /api/articles/:article_id', () => {
     }); 
 });
 
+describe('GET /api/users', () => {
+    test('status: 200, respond with array of objects with correct properites', () => {
+        const expected = [
+            {
+              username: 'butter_bridge',
+              name: 'jonny',
+              avatar_url:
+                'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+            },
+            {
+              username: 'icellusedkars',
+              name: 'sam',
+              avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4'
+            },
+            {
+              username: 'rogersop',
+              name: 'paul',
+              avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+            },
+            {
+              username: 'lurker',
+              name: 'do_nothing',
+              avatar_url:
+                'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
+            }
+        ];
+        
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then( ({body}) => {
+            expect(body.users).toEqual(expected);
+        })
+    });
+});

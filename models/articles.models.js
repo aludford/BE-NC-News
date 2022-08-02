@@ -1,8 +1,11 @@
 const db = require('../db/connection.js');
 
 exports.fetchArticlesId = (article_id) => {
+    /*the return type of the COUNT operator is bigint
+    which can exceed the maximum value of an int in JavaScript,
+    hence interpreted as a string. I've typecast it into an integer */
     return db
-    .query('SELECT * FROM articles WHERE article_id = $1;',[article_id])
+    .query('SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;',[article_id])
     .then( ({rows}) => {
         const article = rows[0];
         if (!article) {

@@ -1,12 +1,15 @@
 const express = require('express');
-const { getArticleId } = require('./controllers/articles.controllers');
+const { getArticleId, patchArticleIdVotes } = require('./controllers/articles.controllers');
 const { getTopics } = require('./controllers/topics.controllers');
 const app = express();
 
+app.use(express.json());
 
 app.get('/api/topics', getTopics);
 
 app.get('/api/articles/:article_id', getArticleId);
+
+app.patch('/api/articles/:article_id', patchArticleIdVotes);
 
 app.all('*', (req, res) => {
     res.status(404).send({msg: 'invalid endpoint'});

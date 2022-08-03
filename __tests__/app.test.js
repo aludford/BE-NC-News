@@ -204,4 +204,12 @@ describe('GET /api/articles', () => {
             )
         })
     })
+    test('status:200 returned array should be sorted in descending order', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then( ({body}) => {
+            expect(body.articles).toBeSortedBy('created_at', {descending: true,});
+        });
+    });
 });

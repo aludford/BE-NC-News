@@ -49,15 +49,17 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/1')
         .expect(200)
         .then(({body}) => {
-            expect(body.article).toEqual({
-                article_id: 1,
-                title: "Living in the shadow of a great man",
-                topic: "mitch",
-                author: "butter_bridge",
-                body: "I find this existence challenging",
-                created_at: expect.any(String),
-                votes: 100,
-            });
+            expect(body.article).toEqual(
+                expect.objectContaining({
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: expect.any(String),
+                    votes: 100,
+                }),
+            );
         });
     });
     test('status:400, responds with an error message when passed a bad article ID', () => {
@@ -158,5 +160,25 @@ describe('GET /api/users', () => {
         .then( ({body}) => {
             expect(body.users).toEqual(expected);
         })
+    });
+});
+
+describe('GET /api/articles/:article_id (comment count)', () => {
+    test('status:200, respond with article object with correct properties incl comment count ', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.article).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: expect.any(String),
+                votes: 100,
+                comment_count: 11
+            });
+        });
     });
 });

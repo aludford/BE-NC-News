@@ -128,7 +128,7 @@ describe('PATCH /api/articles/:article_id', () => {
 });
 
 describe('GET /api/users', () => {
-    test('status: 200, respond with array of objects with correct properites', () => {
+    test('status: 200, respond with array of objects with correct properties', () => {
         const expected = [
             {
               username: 'butter_bridge',
@@ -181,4 +181,27 @@ describe('GET /api/articles/:article_id (comment count)', () => {
             });
         });
     });
+});
+
+describe('GET /api/articles', () => {
+    test('status: 200, respond with array of article objects with correct properties', () => {       
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then( ({body}) => {
+            expect(body.articles).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    }),
+                 ])
+            )
+        })
+    })
 });

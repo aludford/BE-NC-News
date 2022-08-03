@@ -1,4 +1,4 @@
-const { fetchArticlesId, updateArticlesIdVotes } = require("../models/articles.models");
+const { fetchArticlesId, updateArticlesIdVotes, selectArticles } = require("../models/articles.models");
 
 
 exports.getArticleId = (req, res, next) => {
@@ -16,4 +16,11 @@ exports.patchArticleIdVotes = (req, res, next) => {
         res.status(200).send({article});
     })
     .catch(next);
+};
+
+exports.getArticles = (req, res, next) => {
+    selectArticles()
+    .then((articles) => {
+        res.status(200).send({articles});
+    });
 };

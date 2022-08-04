@@ -1,4 +1,5 @@
 const db = require('../db/connection.js');
+const checkExists = require('../db/seeds/utils.js')
 
 exports.fetchArticleById = (article_id) => {
     /*the return type of the COUNT operator is bigint
@@ -38,15 +39,34 @@ exports.updateArticlesIdVotes = (article_id, incVotes) => {
     });
 };
 
-exports.selectArticles = () => {
-    return db
-    .query(`SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comment_id)::int AS comment_count
-            FROM articles
-            LEFT JOIN comments
-            ON articles.article_id = comments.article_id
-            GROUP BY articles.article_id
-            ORDER BY articles.created_at DESC;`)
-    .then(({rows: articles}) => {
-        return articles;
-    });
-}
+exports.selectArticles = (sort_by, order, topic) => {
+    //whitelist acceptable query
+    const validSortBys = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes'];
+    const validOrders = ['asc','desc'];
+    
+    if(!sort_by) {sort_by = 'created_at'}; //if sort_by is undefined, assign the default date
+    if(!order) {order = 'desc'}; //if order is undefined, assign the default desc
+
+    const queryWhereValues = [];
+    let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comment_id)::int AS comment_count
+                    FROM articles
+                    LEFT JOIN comments
+                    ON articles.article_id = comments.article_id `;
+
+    if (topic) {
+        queryStr += 'WHERE topic = $1 ';
+        queryWhereValues.push(topic)
+    };
+
+    queryStr += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`
+
+    if (validSortBys.includes(sort_by) && validOrders.includes(order)) {
+        return db
+        .query(queryStr, queryWhereValues)
+        .then(({rows: articles}) => {
+            return articles;
+        });
+    };
+    return Promise.reject({status: 400, msg: 'invalid sort_by and/or sort order'})
+
+};

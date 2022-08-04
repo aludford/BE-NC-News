@@ -26,7 +26,6 @@ exports.postComment = (req, res, next) => {
 
     })
     .then( (commentObj) => {
-        //send comment object on key 'comment'
         res.status(201).send({comment: commentObj });
     })
     .catch(next);

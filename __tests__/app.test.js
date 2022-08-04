@@ -258,3 +258,62 @@ describe('GET /api/articles/:article_id/comments', () => {
         });
     });
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('status: 201, responds with the posted comment ', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({username : 'rogersop', body: 'Eat, sleep, code, repeat'})
+        .expect(201)
+        .then( ({body}) => {
+            expect(body.comment).toEqual(
+                expect.objectContaining({
+                    comment_id: expect.any(Number),
+                    body: expect.any(String),
+                    article_id: expect.any(Number),
+                    author: expect.any(String),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String)
+                })
+            );
+        });
+    });
+    test('status:400, responds with an error message when passed a bad article ID', () => {
+        return request(app)
+        .post('/api/articles/notAnID/comments')
+        .send({username : 'rogersop', body: 'Eat, sleep, code, repeat'})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid input')
+        });
+    });
+    test('status 404, responds with error if article_id does not exist ', () => {
+        return request(app)
+        .post('/api/articles/9999/comments')
+        .send({username : 'rogersop', body: 'Eat, sleep, code, repeat'})
+        .expect(404)
+        .then( ({body}) => {
+            expect(body.msg).toBe('article not found');
+        });
+    });
+    test('status 400, responds with error message when passed a username that does not exist  ', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({username : 'crazyCoder', body: 'Eat, sleep, code, repeat'})
+        .expect(400)
+        .then( ({body}) => {
+            expect(body.msg).toBe('invalid input');
+        });
+    });
+    test('status 400, responds with error message when the request object does not have correctly named keys  ', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({badKey1: 'rogersop', badKey2: 'Eat, sleep, code, repeat'})
+        .expect(400)
+        .then( ({body}) => {
+            expect(body.msg).toBe('invalid input');
+        });
+    });
+    //username must be a string - optional test
+
+});

@@ -1,6 +1,6 @@
 const express = require('express');
 const { getArticleId, patchArticleIdVotes, getArticles } = require('./controllers/articles.controllers');
-const { getCommentsByArticleId } = require('./controllers/comments.controllers');
+const { getCommentsByArticleId, postComment } = require('./controllers/comments.controllers');
 const { getTopics } = require('./controllers/topics.controllers');
 const { getUsers } = require('./controllers/users.controllers');
 const app = express();
@@ -19,6 +19,8 @@ app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
+app.post('/api/articles/:article_id/comments', postComment);
+
 app.all('*', (req, res) => {
     res.status(404).send({msg: 'invalid endpoint'});
 })
@@ -34,8 +36,17 @@ app.use((err, req, res, next) => {
 
 // handle specific psql errors
 app.use((err, req, res, next) => {
+    //invalid_text_representation
     if(err.code === '22P02') {
-        res.status(400).send( {msg: 'invalid input'});
+      res.status(400).send( {msg: 'invalid input'});
+    };
+    //foreign_key_violation
+    if(err.code === '23503') {
+      res.status(400).send( {msg: 'invalid input'});
+    };
+    //not_null_violation
+    if(err.code === '23502') {
+      res.status(400).send( {msg: 'invalid input'});
     };
 })
 

@@ -213,3 +213,48 @@ describe('GET /api/articles', () => {
         });
     });
 });
+
+describe('GET /api/articles/:article_id/comments', () => {
+    test('status:200, respond with array of comment objects with correct properties', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then ( ({body}) => {
+            expect(body.comments).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                    })
+                ])
+            )
+        });
+    });
+    test('status:400, responds with an error message when passed a bad article ID', () => {
+        return request(app)
+        .get('/api/articles/notAnID/comments')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid input')
+        });
+    });
+    test('status:200, responds with empty array for existent category with no comments', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toHaveLength(0);
+        });
+    });
+    test('status:404, responds with an error if the parameter is valid but the entry does not exist', () => {
+        return request(app)
+        .get('/api/articles/9000/comments')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('article not found');
+        });
+    });
+});

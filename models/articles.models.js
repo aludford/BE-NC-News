@@ -1,6 +1,6 @@
 const db = require('../db/connection.js');
 
-exports.fetchArticlesId = (article_id) => {
+exports.fetchArticleById = (article_id) => {
     /*the return type of the COUNT operator is bigint
     which can exceed the maximum value of an int in JavaScript,
     hence interpreted as a string. I've typecast it into an integer */

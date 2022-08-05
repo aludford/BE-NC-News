@@ -315,10 +315,9 @@ describe('POST /api/articles/:article_id/comments', () => {
         });
     });
     //username must be a string - optional test
-
 });
 
-describe('GET /api/articles (queries)', () => {
+describe.only('GET /api/articles (queries)', () => {
     test('status 200, default sort by date and default sort order is descending ', () => {
         return request(app)
         .get('/api/articles')
@@ -355,9 +354,7 @@ describe('GET /api/articles (queries)', () => {
             );
         });
     });
-    test('status 400, sort_by and/or order doesnt exist', () => {
-        //sort_by a column that doesn't exist 400
-        // order !== "asc" / "desc" 400
+    test('status 400, sort_by doesnt exist', () => {
         return request(app)
         .get('/api/articles?sort_by=notValidField')
         .expect(400)
@@ -365,8 +362,15 @@ describe('GET /api/articles (queries)', () => {
             expect(body.msg).toBe('invalid sort_by and/or sort order')
         });
     });
+    test('status 400, order doesnt exist', () => {
+        return request(app)
+        .get('/api/articles?order=notValidOrder')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid sort_by and/or sort order')
+        });
+    });
     test('status 404, topic that is not in the database should respond with error message', () => {
-        //topic that is not in the database 404
         return request(app)
         .get('/api/articles?topic=topicDoesntExist')
         .expect(404)
@@ -375,17 +379,11 @@ describe('GET /api/articles (queries)', () => {
         });
     });
     test('status 200, topic exists but no articles associated with it should respond with empty array ', () => {
-        // topic that exists but does not have any articles associated with it 200
         return request(app)
         .get('/api/articles?topic=paper')
         .expect(200)
         .then(({body}) => {
             expect(body.articles).toHaveLength(0);
         });
-    });
-
-
-
-    
-    
+    });  
 });

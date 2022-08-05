@@ -1,5 +1,4 @@
 const db = require('../db/connection.js');
-const checkExists = require('../db/seeds/utils.js')
 
 exports.fetchArticleById = (article_id) => {
     /*the return type of the COUNT operator is bigint
@@ -68,5 +67,4 @@ exports.selectArticles = (sort_by, order, topic) => {
         });
     };
     return Promise.reject({status: 400, msg: 'invalid sort_by and/or sort order'})
-
 };

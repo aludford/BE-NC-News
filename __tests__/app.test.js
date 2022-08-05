@@ -387,3 +387,30 @@ describe('GET /api/articles (queries)', () => {
         });
     });  
 });
+
+describe('DELETE /api/comments/:comment_id', () => {
+    test('status:204, delete and respond with no content', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then( ({body}) => {
+            expect(body).toEqual({});
+        })
+    });
+    test('status:400, responds with an error message when passed an invalid comment ID', () => {
+        return request(app)
+        .delete('/api/comments/notAnID')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid input')
+        });
+    });
+    test('status:404, responds with an error if the parameter is valid but the entry does not exist', () => {
+        return request(app)
+        .delete('/api/comments/9000')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('comment not found')
+        });
+    });
+});

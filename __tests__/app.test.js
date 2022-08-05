@@ -317,7 +317,7 @@ describe('POST /api/articles/:article_id/comments', () => {
     //username must be a string - optional test
 });
 
-describe.only('GET /api/articles (queries)', () => {
+describe('GET /api/articles (queries)', () => {
     test('status 200, default sort by date and default sort order is descending ', () => {
         return request(app)
         .get('/api/articles')

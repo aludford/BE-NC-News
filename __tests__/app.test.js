@@ -315,5 +315,75 @@ describe('POST /api/articles/:article_id/comments', () => {
         });
     });
     //username must be a string - optional test
+});
 
+describe('GET /api/articles (queries)', () => {
+    test('status 200, default sort by date and default sort order is descending ', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at',{descending: true,})
+        });
+    });
+    test('status 200, sorted by and sort order is as per passed query ', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy('author')
+        });
+    });
+    test('status 200, filtered by topic passed in the query ', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: 'cats',
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    })
+                 ])
+            );
+        });
+    });
+    test('status 400, sort_by doesnt exist', () => {
+        return request(app)
+        .get('/api/articles?sort_by=notValidField')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid sort_by and/or sort order')
+        });
+    });
+    test('status 400, order doesnt exist', () => {
+        return request(app)
+        .get('/api/articles?order=notValidOrder')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('invalid sort_by and/or sort order')
+        });
+    });
+    test('status 404, topic that is not in the database should respond with error message', () => {
+        return request(app)
+        .get('/api/articles?topic=topicDoesntExist')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('topic not found')
+        });
+    });
+    test('status 200, topic exists but no articles associated with it should respond with empty array ', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toHaveLength(0);
+        });
+    });  
 });

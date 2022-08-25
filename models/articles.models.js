@@ -76,7 +76,7 @@ exports.selectArticles = (sort_by, order, topic) => {
     queryWhereValues.push(topic);
   }
 
-  queryStr += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`;
+  queryStr += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
 
   if (validSortBys.includes(sort_by) && validOrders.includes(order)) {
     return db.query(queryStr, queryWhereValues).then(({ rows: articles }) => {

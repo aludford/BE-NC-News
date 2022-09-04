@@ -10,8 +10,8 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": [],
+    "description": "serves an object containing an array of all articles",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -29,35 +29,37 @@
     "description": "serves an object of the selected article",
     "queries": [],
     "exampleResponse": {
-      "article": 
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341,
-          "comment_count": "3"
-        }
+      "article": {
+        "article_id": 33,
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": 1527695953341,
+        "votes": 0,
+        "comment_count": "3"
+      }
     }
   },
   "PATCH /api/articles:article_id": {
     "description": "serves an object of the updated article",
     "queries": [],
+    "request body": "an object in the form { inc_votes: newVote }. newVote will indicate how much the votes property in the database should be updated by",
     "exampleResponse": {
-      "article":
-        {
-          "article_id": "5",
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341,
-          "comment_count": "3"
-        }
+      "article": {
+        "article_id": "5",
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": 1527695953341,
+        "comment_count": "3",
+        "votes": 5
+      }
     }
   },
   "GET /api/users": {
-    "description": "serves an array of all the users",
+    "description": "serves an object containing an array of all the users",
     "queries": [],
     "exampleResponse": {
       "users": [
@@ -70,7 +72,7 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves an array of comments for the given `article_id`",
+    "description": "serves an object containing an array of comments for the given `article_id`",
     "queries": [],
     "exampleResponse": {
       "comments": [
@@ -87,15 +89,16 @@
   "POST /api/articles/:article_id/comments": {
     "description": "serves an object of the posted comment",
     "queries": [],
+    "request body": "an object with the following properties: username, body e.g. {username: jessjelly, body: Nobis consequatur animi}",
     "exampleResponse": {
-      "comment":
-        {
-          "comment_id": "2",
-          "votes": "7",
-          "created_at": "1577890920000",
-          "author": "grumpy19",
-          "body": "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam."
-        }
+      "comment": {
+        "article_id": 1,
+        "comment_id": "2",
+        "votes": "7",
+        "created_at": "1577890920000",
+        "author": "grumpy19",
+        "body": "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam."
+      }
     }
   },
   "DELETE /api/comments/:comment_id": {
